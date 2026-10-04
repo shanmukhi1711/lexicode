@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Plagiarism Check Results</h2>
+    <div style="display: flex; gap: 2rem; margin-top: 1rem;">
+        <div style="flex: 1; text-align: center;">
+            <div style="width: 150px; height: 150px; border-radius: 50%; border: 10px solid {{ 'green' if check.score < 40 else 'orange' if check.score < 80 else 'red' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2rem; font-weight: bold;">
+                {{ "%.1f"|format(check.score) }}%
+            </div>
+            <h3 style="margin-top: 1rem;">Verdict: {{ verdict }}</h3>
+        </div>
+        <div style="flex: 2;">
+            <h3>Title: {{ check.title or 'Untitled Check' }}</h3>
+            <p><strong>Date:</strong> {{ check.date.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p><strong>Matches Found:</strong></p>
+            <table style="width: 100%; text-align: left; border-collapse: collapse;">
+                <tr>
+                    <th style="border-bottom: 1px solid #ccc; padding: 0.5rem 0;">Source Document</th>
+                    <th style="border-bottom: 1px solid #ccc; padding: 0.5rem 0;">Similarity %</th>
+                </tr>
+                {% for source, sim in details.matches %}
+                <tr>
+                    <td style="padding: 0.5rem 0;">{{ source }}</td>
+                    <td style="padding: 0.5rem 0;">{{ "%.1f"|format(sim * 100) }}%</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="2" style="padding: 0.5rem 0;">No matches found.</td>
+                </tr>
+                {% endfor %}
+            </table>
+            
+            <div style="margin-top: 1rem;">
+                <a href="{{ url_for('main.check') }}" class="btn">Check Another</a>
+                <a href="{{ url_for('main.dashboard') }}" class="btn" style="background-color: #666;">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

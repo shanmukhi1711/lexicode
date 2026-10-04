@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>Welcome to your Dashboard</h2>
+    
+    <div class="quick-actions" style="margin-bottom: 2rem;">
+        <a href="{{ url_for('main.check') }}" class="btn">New Check</a>
+        <a href="{{ url_for('main.check') }}" class="btn">Batch Check</a>
+        <a href="{{ url_for('main.check') }}" class="btn">Cross-Compare</a>
+        <a href="{{ url_for('main.library') }}" class="btn">Reference Library</a>
+    </div>
+
+    <div class="stat-cards" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+        <div class="card" style="flex: 1; padding: 1.5rem; text-align: center; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Total Checks</h3>
+            <p style="font-size: 2rem; margin: 0.5rem 0; color: #0b3d91;">{{ total_checks }}</p>
+        </div>
+        <div class="card" style="flex: 1; padding: 1.5rem; text-align: center; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Average Similarity</h3>
+            <p style="font-size: 2rem; margin: 0.5rem 0; color: #0b3d91;">{{ avg_sim }}%</p>
+        </div>
+        <div class="card" style="flex: 1; padding: 1.5rem; text-align: center; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Reference Docs</h3>
+            <p style="font-size: 2rem; margin: 0.5rem 0; color: #0b3d91;">{{ total_docs }}</p>
+        </div>
+    </div>
+
+    <div class="recent-checks card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3>Recent Checks</h3>
+        {% if checks %}
+            <table style="width: 100%; text-align: left; border-collapse: collapse; margin-top: 1rem;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #eee;">
+                        <th style="padding: 10px;">Date</th>
+                        <th style="padding: 10px;">Title</th>
+                        <th style="padding: 10px;">Type</th>
+                        <th style="padding: 10px;">Score</th>
+                        <th style="padding: 10px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for check in checks %}
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px;">{{ check.date.strftime('%Y-%m-%d %H:%M') if check.date else 'Unknown' }}</td>
+                        <td style="padding: 10px;">{{ check.title }}</td>
+                        <td style="padding: 10px;">{{ check.type }}</td>
+                        <td style="padding: 10px; font-weight: bold; color: {% if check.score > 60 %}red{% elif check.score > 20 %}orange{% else %}green{% endif %};">{{ "%.1f"|format(check.score) }}%</td>
+                        <td style="padding: 10px;"><a href="{{ url_for('main.results', check_id=check.id) }}" style="color: #0b3d91; text-decoration: underline;">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No checks run yet. Click "New Check" to get started.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

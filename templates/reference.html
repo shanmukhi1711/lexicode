@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Reference Library</h2>
+    <div style="margin-bottom: 2rem;">
+        <form method="POST" action="{{ url_for('main.add_reference') }}" style="display: flex; gap: 1rem; align-items: flex-end;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div style="flex: 1;">
+                <label>Title</label>
+                <input type="text" name="title" required style="width: 100%; padding: 0.5rem;">
+            </div>
+            <div style="flex: 2;">
+                <label>Content</label>
+                <input type="text" name="content" required style="width: 100%; padding: 0.5rem;">
+            </div>
+            <button type="submit" class="btn btn-primary">Add Reference</button>
+        </form>
+    </div>
+    
+    <table style="width: 100%; text-align: left; border-collapse: collapse; margin-top: 1rem;">
+        <thead>
+            <tr style="border-bottom: 2px solid #eee;">
+                <th style="padding: 10px;">ID</th>
+                <th style="padding: 10px;">Title</th>
+                <th style="padding: 10px;">Preview</th>
+                <th style="padding: 10px;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in documents %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px;">{{ doc.id }}</td>
+                <td style="padding: 10px;">{{ doc.title }}</td>
+                <td style="padding: 10px;">{{ doc.content[:50] }}...</td>
+                <td style="padding: 10px;">
+                    <form method="POST" action="{{ url_for('main.delete_reference', doc_id=doc.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn" style="background-color: #dc3545; padding: 0.2rem 0.5rem; font-size: 0.8rem;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
